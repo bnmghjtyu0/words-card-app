@@ -2,8 +2,12 @@ import React, {Component} from 'react';
 import Swiper from 'react-native-deck-swiper';
 import styled from 'styled-components';
 import {flexbox, layout, typography} from 'styled-system';
-import {TouchableOpacity, Text, View, TextInput} from 'react-native';
+// import {Button} from 'react-native-elements';
+import {Button} from 'react-native-paper';
+import {TextInput} from 'react-native-paper';
+import {TouchableOpacity, Text, View} from 'react-native';
 import Video from 'react-native-video';
+// import VideoPlayer from 'react-native-video-controls';
 import {firebaseSuperior} from './src/config/firebaseConfig';
 import {client} from './src/api/index';
 const CoolRef = firebaseSuperior.ref('cool');
@@ -27,6 +31,7 @@ const cardDatas = [
 // });
 
 const Container = styled.View`
+  ${flexbox}
   padding: 0 20px;
 `;
 
@@ -66,12 +71,6 @@ const ButtonText = styled.Text`
   font-size: 20px;
 `;
 
-const CardDetailsView = styled.View`
-  display: flex;
-  flex-grow: 0.15;
-  background-color: transparent;
-`;
-
 const getAPI = async (word) => {
   const wordLower = word.toLowerCase();
   if (wordLower !== '') {
@@ -87,7 +86,6 @@ const getAPI = async (word) => {
         },
       },
     );
-    console.log(res);
     CoolRef.push({
       dictionaryCode: res[0].dictionaryCode,
       entryId: res[0].entryId,
@@ -100,20 +98,54 @@ const Card = ({card}) => {
   return (
     <CardView width="60%" style={{marginLeft: 'auto', marginRight: 'auto'}}>
       <TextSystem fontSize="40">{card.entryId}</TextSystem>
-      {/* <Video
-        source={{uri: card.pronunciationUrl}}
-      /> */}
     </CardView>
   );
 };
 
-const CardDetails = ({index, swiperRef}) => {
+const CardDetails = ({index, swiperRef, datas}) => {
   const [word, setWord] = React.useState('');
+  const [pause, setPause] = React.useState(false);
+
   return (
-    <Container style={{flex: 0.4}}>
-      <CardDetailsView>
+    <Container flexGrow="1">
+      <Flex style={{marginTop: 20}}>
+        {datas.length !== 0 && (
+          <Video
+            source={{uri: datas[index].pronunciationUrl}}
+            repeat={true}
+            paused={pause}
+            onEnd={() => {
+              setPause(true);
+            }}
+          />
+        )}
+        <Flex flexDirection="row" style={{marginBottom: 20}}>
+          <Button
+            mode="contained"
+            onPress={() => {
+              setPause(false);
+            }}
+            style={{marginRight: 10}}>
+            播放
+          </Button>
+          <Button
+            mode="contained"
+            onPress={() => {
+              swiperRef.current.swipeLeft();
+            }}
+            style={{marginRight: 10}}>
+            prev
+          </Button>
+          <Button
+            mode="contained"
+            onPress={() => {
+              swiperRef.current.swipeRight();
+            }}>
+            next
+          </Button>
+        </Flex>
         {/* <Text>{cardDatas[index].price}</Text> */}
-        <Flex flexDirection="row" flexWrap="nowrap">
+        {/* <Flex flexDirection="row" flexWrap="nowrap">
           <Flex flexDirection="row" flexGrow="1" justifyContent="center">
             <Box width="50%" flexDirection="row" justifyContent="center">
               <ButtonStyle onPress={() => swiperRef.current.swipeLeft()}>
@@ -127,10 +159,10 @@ const CardDetails = ({index, swiperRef}) => {
               </ButtonStyle>
             </Box>
           </Flex>
-        </Flex>
+        </Flex> */}
 
         <Flex flexDirection="row" flexGrow="1" alignItems="center">
-          <TextInput
+          {/* <TextInput
             style={{
               width: '60%',
               marginBottom: 30,
@@ -146,12 +178,25 @@ const CardDetails = ({index, swiperRef}) => {
             label="123"
             value={word}
             onChangeText={(text) => setWord(text)}
+          /> */}
+          <TextInput
+            mode="outlined"
+            label="word"
+            value={word}
+            onChangeText={(text) => setWord(text)}
+            style={{flex: 1, marginRight: 20}}
           />
-          <TouchableOpacity onPress={() => getAPI(word)}>
+          <Button
+            mode="contained"
+            onPress={() => {
+              getAPI(word);
+              setWord('');
+            }}
+            labelStyle={{fontSize: 20}}>
             <Text>送出</Text>
-          </TouchableOpacity>
+          </Button>
         </Flex>
-      </CardDetailsView>
+      </Flex>
     </Container>
   );
 };
@@ -172,7 +217,7 @@ const App = () => {
       });
       let deepCopyFirebase = [...ary];
       deepCopyFirebase.reverse();
-      console.log(deepCopyFirebase);
+      // console.log(deepCopyFirebase);
       setFirebaseDatas(deepCopyFirebase);
     });
   };
@@ -198,49 +243,50 @@ const App = () => {
             stackSize={4}
             stackScale={10}
             stackSeparation={14}
-            infinite={false}
+            infinite={true}
             // backgroundColor={'transparent'}
             disableTopSwipe
             disableBottomSwipe
             animateOverlayLabelsOpacity
-            overlayLabels={{
-              left: {
-                title: '不會',
-                style: {
-                  label: {
-                    backgroundColor: 'black',
-                    borderColor: 'black',
-                    color: 'white',
-                    borderWidth: 1,
-                  },
-                  wrapper: {
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-start',
-                    marginTop: 30,
-                    marginLeft: -30,
-                  },
-                },
-              },
-              right: {
-                title: '會',
-                style: {
-                  label: {
-                    backgroundColor: 'black',
-                    borderColor: 'black',
-                    color: 'white',
-                    borderWidth: 1,
-                  },
-                  wrapper: {
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start',
-                    marginTop: 30,
-                    marginLeft: 30,
-                  },
-                },
-              },
-            }}>
+            // overlayLabels={{
+            //   left: {
+            //     title: '不會',
+            //     style: {
+            //       label: {
+            //         backgroundColor: 'black',
+            //         borderColor: 'black',
+            //         color: 'white',
+            //         borderWidth: 1,
+            //       },
+            //       wrapper: {
+            //         flexDirection: 'column',
+            //         alignItems: 'flex-end',
+            //         justifyContent: 'flex-start',
+            //         marginTop: 30,
+            //         marginLeft: -30,
+            //       },
+            //     },
+            //   },
+            //   right: {
+            //     title: '會',
+            //     style: {
+            //       label: {
+            //         backgroundColor: 'black',
+            //         borderColor: 'black',
+            //         color: 'white',
+            //         borderWidth: 1,
+            //       },
+            //       wrapper: {
+            //         flexDirection: 'column',
+            //         alignItems: 'flex-start',
+            //         justifyContent: 'flex-start',
+            //         marginTop: 30,
+            //         marginLeft: 30,
+            //       },
+            //     },
+            //   },
+            // }}
+          >
             <TouchableOpacity
               onPress={() => swiperRef.swipeBack()}
               title="Swipe Back"
@@ -248,7 +294,11 @@ const App = () => {
           </Swiper>
         ) : null}
       </Flex>
-      <CardDetails index={cardIndex} swiperRef={swiperRef} />
+      <CardDetails
+        index={cardIndex}
+        swiperRef={swiperRef}
+        datas={firebaseDatas}
+      />
     </Flex>
   );
 };
