@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import Swiper from 'react-native-deck-swiper';
 import styled from 'styled-components';
 import {flexbox, layout, typography} from 'styled-system';
-import {TouchableOpacity, Text, View} from 'react-native';
+import {TouchableOpacity, Text, View, TextInput} from 'react-native';
+import Video from 'react-native-video';
 import {firebaseSuperior} from './src/config/firebaseConfig';
-
+import {client} from './src/api/index';
 const CoolRef = firebaseSuperior.ref('cool');
-
+// CoolRef.remove();
 const cardDatas = [
   {
     word: 'apple',
@@ -25,8 +26,13 @@ const cardDatas = [
 //   });
 // });
 
+const Container = styled.View`
+  padding: 0 20px;
+`;
+
 const Flex = styled.View`
   ${flexbox}
+  ${layout}
 `;
 const TextSystem = styled.Text`
   ${typography}
@@ -36,9 +42,10 @@ const Box = styled.View`
 `;
 
 const CardView = styled.View`
+  ${layout}
   background-color: #fff;
   display: flex;
-  flex-grow: 0.45;
+  flex-grow: 0.25;
   justify-content: center;
   align-items: center;
   border-radius: 8;
@@ -64,34 +71,88 @@ const CardDetailsView = styled.View`
   flex-grow: 0.15;
   background-color: transparent;
 `;
+
+const getAPI = async (word) => {
+  const wordLower = word.toLowerCase();
+  if (wordLower !== '') {
+    const entryId = wordLower; //grooming
+    const dictCode = 'british';
+    const res = await client(
+      `https://dictionary.cambridge.org/api/v1/dictionaries/${dictCode}/entries/${entryId}/pronunciations`,
+      {
+        body: {},
+        params: {
+          lang: 'us',
+          format: 'mp3',
+        },
+      },
+    );
+    console.log(res);
+    CoolRef.push({
+      dictionaryCode: res[0].dictionaryCode,
+      entryId: res[0].entryId,
+      pronunciationUrl: res[0].pronunciationUrl,
+      lang: res[0].lang,
+    });
+  }
+};
 const Card = ({card}) => {
   return (
-    <CardView>
-      <TextSystem fontSize="40">{card.word}</TextSystem>
+    <CardView width="60%" style={{marginLeft: 'auto', marginRight: 'auto'}}>
+      <TextSystem fontSize="40">{card.entryId}</TextSystem>
+      {/* <Video
+        source={{uri: card.pronunciationUrl}}
+      /> */}
     </CardView>
   );
 };
 
 const CardDetails = ({index, swiperRef}) => {
+  const [word, setWord] = React.useState('');
   return (
-    <CardDetailsView>
-      {/* <Text>{cardDatas[index].price}</Text> */}
-      <Flex flexDirection="row" flexWrap="nowrap">
-        <Flex flexDirection="row" flexGrow="1" justifyContent="center">
-          <Box width="50%" flexDirection="row" justifyContent="center">
-            <ButtonStyle onPress={() => swiperRef.current.swipeLeft()}>
-              <ButtonText>不會</ButtonText>
-            </ButtonStyle>
-          </Box>
+    <Container style={{flex: 0.4}}>
+      <CardDetailsView>
+        {/* <Text>{cardDatas[index].price}</Text> */}
+        <Flex flexDirection="row" flexWrap="nowrap">
+          <Flex flexDirection="row" flexGrow="1" justifyContent="center">
+            <Box width="50%" flexDirection="row" justifyContent="center">
+              <ButtonStyle onPress={() => swiperRef.current.swipeLeft()}>
+                <ButtonText>不會</ButtonText>
+              </ButtonStyle>
+            </Box>
 
-          <Box width="50%" flexDirection="row" justifyContent="center">
-            <ButtonStyle onPress={() => swiperRef.current.swipeRight()}>
-              <ButtonText>會</ButtonText>
-            </ButtonStyle>
-          </Box>
+            <Box width="50%" flexDirection="row" justifyContent="center">
+              <ButtonStyle onPress={() => swiperRef.current.swipeRight()}>
+                <ButtonText>會</ButtonText>
+              </ButtonStyle>
+            </Box>
+          </Flex>
         </Flex>
-      </Flex>
-    </CardDetailsView>
+
+        <Flex flexDirection="row" flexGrow="1" alignItems="center">
+          <TextInput
+            style={{
+              width: '60%',
+              marginBottom: 30,
+              marginTop: 30,
+              borderColor: 'lightgray',
+              borderWidth: 1,
+              height: 40,
+              borderRadius: 6,
+              marginRight: 20,
+              paddingLeft: 12,
+              fontSize: 15,
+            }}
+            label="123"
+            value={word}
+            onChangeText={(text) => setWord(text)}
+          />
+          <TouchableOpacity onPress={() => getAPI(word)}>
+            <Text>送出</Text>
+          </TouchableOpacity>
+        </Flex>
+      </CardDetailsView>
+    </Container>
   );
 };
 
@@ -100,6 +161,9 @@ const App = () => {
   const [infinite, setInfinite] = React.useState(false);
   const [cardIndex, setCardIndex] = React.useState(0);
   const [firebaseDatas, setFirebaseDatas] = React.useState([]);
+  const [pronunciationDatas, setPronunciationDatas] = React.useState([
+    {dictionaryCode: '', entryId: '', pronunciationUrl: '', lang: ''},
+  ]);
   const _loadFirebase = () => {
     CoolRef.on('value', (snapshot) => {
       const ary = [];
@@ -108,18 +172,19 @@ const App = () => {
       });
       let deepCopyFirebase = [...ary];
       deepCopyFirebase.reverse();
-      // console.log(deepCopyFirebase);
+      console.log(deepCopyFirebase);
       setFirebaseDatas(deepCopyFirebase);
     });
   };
+
   React.useEffect(() => {
     _loadFirebase();
   }, []);
 
   return (
     <Flex flexGrow="1">
-      <Flex flexGrow="1">
-        {firebaseDatas.length ? (
+      <Flex flexGrow="1" flexDirection="row" justifyContent="center">
+        {firebaseDatas.length !== 0 ? (
           <Swiper
             ref={swiperRef}
             onSwiped={() => {
@@ -133,7 +198,7 @@ const App = () => {
             stackSize={4}
             stackScale={10}
             stackSeparation={14}
-            infinite
+            infinite={false}
             // backgroundColor={'transparent'}
             disableTopSwipe
             disableBottomSwipe
