@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {flexbox, layout, typography} from 'styled-system';
 import {TouchableOpacity, Text, View} from 'react-native';
 import {firebaseSuperior} from './src/config/firebaseConfig';
+
 const CoolRef = firebaseSuperior.ref('cool');
 
 const cardDatas = [
@@ -75,16 +76,15 @@ const CardDetails = ({index, swiperRef}) => {
   return (
     <CardDetailsView>
       {/* <Text>{cardDatas[index].price}</Text> */}
-
       <Flex flexDirection="row" flexWrap="nowrap">
-        <Flex flexDirection="row" flexGrow="1" flex="0 0 50%">
-          <Box width="100%" flexDirection="row" justifyContent="center">
+        <Flex flexDirection="row" flexGrow="1" justifyContent="center">
+          <Box width="50%" flexDirection="row" justifyContent="center">
             <ButtonStyle onPress={() => swiperRef.current.swipeLeft()}>
               <ButtonText>不會</ButtonText>
             </ButtonStyle>
           </Box>
 
-          <Box width="100%" flexDirection="row" justifyContent="center">
+          <Box width="50%" flexDirection="row" justifyContent="center">
             <ButtonStyle onPress={() => swiperRef.current.swipeRight()}>
               <ButtonText>會</ButtonText>
             </ButtonStyle>
@@ -115,8 +115,6 @@ const App = () => {
   React.useEffect(() => {
     _loadFirebase();
   }, []);
-
-  console.log(firebaseDatas);
 
   return (
     <Flex flexGrow="1">
