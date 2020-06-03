@@ -112,7 +112,7 @@ const CardDetails = ({index, swiperRef, datas}) => {
         {datas.length !== 0 && (
           <Video
             source={{uri: datas[index].pronunciationUrl}}
-            repeat={true}
+            repeat={false}
             paused={pause}
             onEnd={() => {
               setPause(true);

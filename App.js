@@ -23,6 +23,14 @@ function HomeStackScreen() {
   );
 }
 
+function EnglishCardStackScreen() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen name="EnglishCard" component={EnglishCard} />
+    </HomeStack.Navigator>
+  );
+}
+
 const Tab = createBottomTabNavigator();
 const App = () => {
   return (
@@ -30,7 +38,7 @@ const App = () => {
       <NavigationContainer>
         <Tab.Navigator>
           <Tab.Screen name="Home" component={HomeStackScreen} />
-          <Tab.Screen name="EnglishCard" component={EnglishCard} />
+          <Tab.Screen name="EnglishCard" component={EnglishCardStackScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
