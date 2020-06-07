@@ -1,16 +1,23 @@
 import React, {Component} from 'react';
-import {TouchableOpacity, Text, View, FlatList} from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  View,
+  FlatList,
+  AppRegistry,
+} from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import styled from 'styled-components';
 import {flexbox, layout, typography} from 'styled-system';
 // import {Button} from 'react-native-elements';
 import {Button} from 'react-native-paper';
-import {TextInput} from 'react-native-paper';
+import {TextInput, Snackbar} from 'react-native-paper';
 import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // import VideoPlayer from 'react-native-video-controls';
 import {firebaseSuperior} from '../config/firebaseConfig';
 import {client} from '../api/index';
+import Toast from '../wrap/Toast';
 const CoolRef = firebaseSuperior.ref('cool');
 // CoolRef.remove();
 
@@ -23,7 +30,6 @@ const Flex = styled.View`
   ${flexbox}
   ${layout}
 `;
-
 
 const InputSearch = () => {
   const [word, setWord] = React.useState('');
@@ -42,13 +48,16 @@ const InputSearch = () => {
           },
         },
       );
-  
-      CoolRef.push({
-        dictionaryCode: res[0].dictionaryCode,
-        entryId: res[0].entryId,
-        pronunciationUrl: res[0].pronunciationUrl,
-        lang: res[0].lang,
-      });
+      if (res?.errorCode) {
+        Toast.show('api 錯誤');
+      } else {
+        CoolRef.push({
+          dictionaryCode: res[0].dictionaryCode,
+          entryId: res[0].entryId,
+          pronunciationUrl: res[0].pronunciationUrl,
+          lang: res[0].lang,
+        });
+      }
     }
   };
   return (
@@ -81,6 +90,9 @@ const EnglishCard = () => {
   const [firebaseDatas, setFirebaseDatas] = React.useState([]);
   const [play, setPlay] = React.useState(false);
   const [wordNow, setWordNow] = React.useState({});
+  const [visible, setVisible] = React.useState(false);
+  const [snackBarVisible, setSnackBarVisible] = React.useState(false);
+
   const _loadFirebase = () => {
     CoolRef.on('value', (snapshot) => {
       const ary = [];
@@ -109,6 +121,7 @@ const EnglishCard = () => {
     setPlay(true);
     setWordNow(item);
   };
+
   return (
     <Flex flexGrow="1">
       <Container style={{marginTop: 20}}>
