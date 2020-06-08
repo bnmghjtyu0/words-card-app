@@ -6,6 +6,7 @@ import {
   FlatList,
   AppRegistry,
 } from 'react-native';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import Swiper from 'react-native-deck-swiper';
 import styled from 'styled-components';
 import {flexbox, layout, typography} from 'styled-system';
@@ -123,37 +124,54 @@ const EnglishCard = () => {
   };
 
   return (
-    <Flex flexGrow="1">
-      <Container style={{marginTop: 20}}>
-        <InputSearch />
-      </Container>
-      <Container style={{marginTop: 20}}>
-        <FlatList
-          data={firebaseDatas}
-          renderItem={({item}) => {
-            return (
-              <View
-                style={{
-                  marginBottom: 20,
-                  backgroundColor: '#fff',
-                  padding: 20,
-                  borderRadius: 12,
-                }}>
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                  <View style={{marginRight: 'auto'}}>
-                    <Text style={{fontSize: 20}}>{item.entryId}</Text>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+      <Flex flexGrow="1">
+        <Container style={{marginTop: 40}}>
+          <InputSearch />
+        </Container>
+        <Container style={{marginTop: 20}}>
+          <FlatList
+            data={firebaseDatas}
+            renderItem={({item}) => {
+              return (
+                <View
+                  style={{
+                    marginBottom: 20,
+                    backgroundColor: '#fff',
+                    padding: 20,
+                    paddingTop: 10,
+                    paddingBottom: 10,
+                    borderRadius: 6,
+                  }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <View style={{marginRight: 'auto'}}>
+                      <Text style={{fontSize: 20}}>{item.entryId}</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={{top: 2}}
+                      onPress={() => onPlay(item)}>
+                      <Ionicons name="ios-volume-high" size={30} color="#666" />
+                    </TouchableOpacity>
                   </View>
-                  <TouchableOpacity onPress={() => onPlay(item)}>
-                    <Ionicons name="ios-volume-high" size={30} color="#666" />
-                  </TouchableOpacity>
                 </View>
-              </View>
-            );
-          }}
-        />
-      </Container>
-      {play && renderVideo()}
-    </Flex>
+              );
+            }}
+          />
+        </Container>
+        {play && renderVideo()}
+      </Flex>
+    </SafeAreaView>
   );
 };
 
