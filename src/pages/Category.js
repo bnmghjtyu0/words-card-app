@@ -137,7 +137,7 @@ const CategoryScreen = ({navigation}) => {
     <SafeAreaView
       style={{flex: 1, justifyContent: 'space-between', alignItems: 'center'}}>
       <InputSearch />
-      <ScrollView>
+      <ScrollView style={{marginTop: 20}}>
         <RScontainer>
           <TouchableOpacity
             style={{marginBottom: 20}}
