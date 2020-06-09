@@ -9,7 +9,9 @@ import {RScontainer, RSrow, RSBlock} from '../styled/main';
 import {firebaseSuperior} from '../config/firebaseConfig';
 import Toast from '../wrap/Toast';
 import {ScrollView} from 'react-native-gesture-handler';
-const ClothesRef = firebaseSuperior.ref('clothes');
+
+const CategoryRef = firebaseSuperior.ref('category');
+const CategoryClothesRef = CategoryRef.child('clothes');
 
 const CategoryScreen = ({navigation}) => {
   navigation.setOptions({
@@ -40,7 +42,7 @@ const CategoryScreen = ({navigation}) => {
         Toast.show('api 錯誤');
       } else {
         console.log('correct');
-        ClothesRef.push({
+        CategoryClothesRef.push({
           dictionaryCode: res[0].dictionaryCode,
           entryId: res[0].entryId,
           pronunciationUrl: res[0].pronunciationUrl,
@@ -50,28 +52,37 @@ const CategoryScreen = ({navigation}) => {
     }
   };
 
+  const setUnsplashAPI = async (word) => {
+    const res = await getUnsplashImage(word);
+    console.log(res);
+    CategoryClothesRef.push({
+      entryId: decodeURIComponent(word),
+      image: res.results[0].urls.small,
+    });
+  };
   const updateUnsplashImage = (ary) => {
-    ary.map((v, i) => {
-      const id = v.id;
+    ary.map(async (v, i) => {
       const word = v.entryId;
-      getUnsplashImage(id, word, v);
+      const res = await getUnsplashImage(word);
+      updateClothesRef(v, res.results);
     });
   };
 
-  const getUnsplashImage = async (id, word, v) => {
-    fetch(
+  const updateClothesRef = (val, data) => {
+    firebaseSuperior.ref('category/clothes/' + val.id).set({
+      ...val,
+      image: data[0].urls.small,
+    });
+  };
+  const getUnsplashImage = async (word) => {
+    return fetch(
       `https://api.unsplash.com/search/photos?client_id=4070052047e85343f77f7bbfb056ca4da387e25b3114baff0644247779a29964&query=${word}`,
     )
       .then((res) => res.json())
-      .then((json) => {
-        firebaseSuperior.ref('clothes/' + id).set({
-          ...v,
-          image: json.results[0].urls.small,
-        });
-      });
+      .then((json) => Promise.resolve(json));
   };
   const _loadFirebase = () => {
-    ClothesRef.on('value', (snapshot) => {
+    CategoryClothesRef.on('value', (snapshot) => {
       const ary = [];
       snapshot.forEach(function (item) {
         ary.push({id: item.key, ...item.val()});
@@ -83,7 +94,6 @@ const CategoryScreen = ({navigation}) => {
   };
   React.useEffect(() => {
     _loadFirebase();
-    // getCambridge();
   }, []);
 
   const renderVideo = () => {
@@ -102,14 +112,20 @@ const CategoryScreen = ({navigation}) => {
 
   const InputSearch = () => {
     const [word, setWord] = React.useState('');
-    const getAPI = async (word) => {
-      const wordLower = word.toLowerCase();
+    const getCambridgeAPI = async (word) => {
+      const wordLower = encodeURIComponent(word.toLowerCase().trim());
       if (wordLower !== '') {
-        getCambridge(word);
+        getCambridge(wordLower);
+      }
+    };
+    const getUnsplashAPI = async (word) => {
+      const wordLower = encodeURIComponent(word.toLowerCase().trim());
+      if (wordLower !== '') {
+        setUnsplashAPI(wordLower);
       }
     };
     return (
-      <RScontainer flexDirection="row" flexGrow="1" alignItems="center">
+      <RScontainer flexDirection="row" flexGrow="1" alignItems="flex-start">
         <TextInput
           mode="outlined"
           label="word"
@@ -124,18 +140,31 @@ const CategoryScreen = ({navigation}) => {
         <Button
           mode="contained"
           onPress={() => {
-            getAPI(word);
+            getCambridgeAPI(word);
             setWord('');
           }}
           labelStyle={{fontSize: 10}}>
           <Text style={{fontSize: 15}}>送出</Text>
+        </Button>
+        <Button
+          mode="contained"
+          onPress={() => {
+            getUnsplashAPI(word);
+            setWord('');
+          }}
+          labelStyle={{fontSize: 10}}>
+          <Text style={{fontSize: 15}}>送出圖片</Text>
         </Button>
       </RScontainer>
     );
   };
   return (
     <SafeAreaView
-      style={{flex: 1, justifyContent: 'space-between', alignItems: 'center'}}>
+      style={{
+        flex: 1,
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+      }}>
       <InputSearch />
       <ScrollView style={{marginTop: 20}}>
         <RScontainer>
@@ -146,7 +175,6 @@ const CategoryScreen = ({navigation}) => {
           </TouchableOpacity>
           <RSrow>
             {firebaseDatas.map((data, dataIdx) => {
-              console.log(data);
               return (
                 <RSBlock key={data.id} col={6} mb={30}>
                   <Card onPress={() => onPlay(data)}>
@@ -163,16 +191,17 @@ const CategoryScreen = ({navigation}) => {
                       <Text style={{fontSize: 22, marginRight: 10}}>
                         {data.entryId}
                       </Text>
-
-                      <TouchableOpacity
-                      //   onPress={() => onPlay(data)}
-                      >
-                        <Ionicons
-                          name="ios-volume-high"
-                          size={30}
-                          color="#666"
-                        />
-                      </TouchableOpacity>
+                      {data.pronunciationUrl && (
+                        <TouchableOpacity
+                        //   onPress={() => onPlay(data)}
+                        >
+                          <Ionicons
+                            name="ios-volume-high"
+                            size={30}
+                            color="#666"
+                          />
+                        </TouchableOpacity>
+                      )}
                     </View>
                     {/* <Card.Actions>
                     <Button>Cancel</Button>
