@@ -9,7 +9,7 @@ import {RScontainer, RSrow, RSBlock} from '../styled/main';
 import {firebaseSuperior} from '../config/firebaseConfig';
 import Toast from '../wrap/Toast';
 import {ScrollView} from 'react-native-gesture-handler';
-
+import SwipeablePanel from 'rn-swipeable-panel';
 const CategoryRef = firebaseSuperior.ref('category');
 const CategoryClothesRef = CategoryRef.child('clothes');
 
@@ -18,11 +18,13 @@ const CategoryScreen = ({navigation}) => {
     headerTitle: 'Other',
     headerTitleAlign: 'center',
   });
-
+  const [swipeablePanelActive, setSwipeablePanelActive] = React.useState(false);
   const [firebaseDatas, setFirebaseDatas] = React.useState([]);
   const [word, setWord] = React.useState('');
   const [wordNow, setWordNow] = React.useState({});
   const [play, setPlay] = React.useState(false);
+  const [changePicktureDatas, setChangePicktureDatas] = React.useState([]);
+  const [clickedWord, setClickedWord] = React.useState({});
   const getCambridge = async (word) => {
     const wordLower = word.toLowerCase();
     if (wordLower !== '') {
@@ -158,6 +160,25 @@ const CategoryScreen = ({navigation}) => {
       </RScontainer>
     );
   };
+
+  const changePicture = async (data) => {
+    const imgData = await getUnsplashImage(data.entryId);
+    console.log(imgData);
+    setChangePicktureDatas(imgData.results);
+    // const getUnsplashAPI = async (word) => {
+    //   const wordLower = encodeURIComponent(word.toLowerCase().trim());
+    //   if (wordLower !== '') {
+    //     setUnsplashAPI(wordLower);
+    //   }
+    // };
+
+    // const updateClothesRef = (val, data) => {
+    //   firebaseSuperior.ref('category/clothes/' + val.id).set({
+    //     ...val,
+    //     image: data[0].urls.small,
+    //   });
+    // };
+  };
   return (
     <SafeAreaView
       style={{
@@ -203,17 +224,78 @@ const CategoryScreen = ({navigation}) => {
                         </TouchableOpacity>
                       )}
                     </View>
-                    {/* <Card.Actions>
-                    <Button>Cancel</Button>
-                    <Button>Ok</Button>
-                  </Card.Actions> */}
                   </Card>
+                  <View
+                    style={{
+                      backgroundColor: '#fff',
+                      width: '80%',
+                      left: '10%',
+                      zIndex: -1,
+                      paddingVertical: 20,
+                      paddingHorizontal: 20,
+                    }}>
+                    <Button
+                      mode="contained"
+                      color="green"
+                      onPress={() => {
+                        setSwipeablePanelActive(true);
+                        changePicture(data);
+                        setClickedWord(data);
+                      }}>
+                      <Text>換圖</Text>
+                    </Button>
+                  </View>
                 </RSBlock>
               );
             })}
           </RSrow>
         </RScontainer>
       </ScrollView>
+      <SwipeablePanel
+        fullWidth
+        isActive={swipeablePanelActive}
+        onClose={() => {
+          setSwipeablePanelActive(false);
+        }}
+        onPressCloseButton={() => {
+          setSwipeablePanelActive(false);
+        }}>
+        <RScontainer>
+          <TouchableOpacity
+            onPress={() => {
+              setSwipeablePanelActive(false);
+            }}>
+            <Text>關閉</Text>
+          </TouchableOpacity>
+          <RSrow>
+            {changePicktureDatas.length !== 0 &&
+              changePicktureDatas.map((data, dataIdx) => {
+                return (
+                  <RSBlock key={data.id} col={6} mb={30}>
+                    <Card
+                      onPress={() => {
+                        const updateClothesRef = (val, data) => {
+                          firebaseSuperior
+                            .ref('category/clothes/' + val.id)
+                            .set({
+                              ...val,
+                              image: data.urls.small,
+                            });
+                        };
+                        updateClothesRef(clickedWord, data);
+                        setSwipeablePanelActive(false);
+                      }}>
+                      <Image
+                        source={{uri: data.urls.regular}}
+                        style={{width: '100%', height: 200}}
+                      />
+                    </Card>
+                  </RSBlock>
+                );
+              })}
+          </RSrow>
+        </RScontainer>
+      </SwipeablePanel>
       {play && renderVideo()}
     </SafeAreaView>
   );
