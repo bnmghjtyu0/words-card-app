@@ -6,7 +6,7 @@ import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {client} from '../api/index';
 import {RScontainer, RSrow, RSBlock} from '../styled/main';
-import {firebaseSuperior} from '../config/firebaseConfig';
+import {firebaseSuperior, firebaseDB} from '../config/firebaseConfig';
 import Toast from '../wrap/Toast';
 import {ScrollView} from 'react-native-gesture-handler';
 import SwipeablePanel from 'rn-swipeable-panel';
@@ -41,7 +41,7 @@ const CategoryScreen = ({navigation}) => {
         },
       );
       if (res?.errorCode) {
-        Toast.show('api 錯誤');
+        Toast.show(res?.errorCode);
       } else {
         console.log('correct');
         CategoryClothesRef.push({
@@ -56,7 +56,6 @@ const CategoryScreen = ({navigation}) => {
 
   const setUnsplashAPI = async (word) => {
     const res = await getUnsplashImage(word);
-    console.log(res);
     CategoryClothesRef.push({
       entryId: decodeURIComponent(word),
       image: res.results[0].urls.small,
@@ -94,8 +93,55 @@ const CategoryScreen = ({navigation}) => {
       setFirebaseDatas(deepCopyFirebase);
     });
   };
+
+  const _loadFirestore = () => {
+    // var firebaseDB = firebase.firestore();
+    // set firebaseDB.collection('').doc('').set({})
+    // add collection('').doc('').add({})
+    // get collection('').get().then((querySnapshot)=>{querySnapshot.forEach((doc)=>console.log(doc))})
+    // del collection('').doc('').delete().then(function(){console.log('success')})
+
+    // add('apple')
+    const add = (word) => {
+      const docUserRegular = firebaseDB.collection('cagegory').doc('clothes');
+      docUserRegular.get().then(async (doc) => {
+        if (doc.exists) {
+          const res = await doc.data();
+          if (Object.keys(res).length === 0) {
+            const datas = {
+              word: word,
+            };
+            docUserRegular.set({items: [datas]}, {merge: true});
+          } else {
+            const wordExists = res.items.filter((data) => data.word === word);
+            if (wordExists.length !== 0) {
+            } else {
+              const datas = {
+                word: word,
+              };
+              docUserRegular.set({items: [...res.items, datas]}, {merge: true});
+            }
+          }
+        } else {
+          console.log('No such document!');
+        }
+      });
+    };
+    add('banafna');
+    // const query = firebaseDB
+    //   .collection('cagegory')
+    //   .where('clothes', 'array-contains', 'sharedWith');
+    // console.log('query', query);
+    const get = () => {
+      const docUserRegular = firebaseDB.collection('cagegory').doc('clothes');
+      docUserRegular.get().then(function (doc) {
+        console.log(doc.data());
+      });
+    };
+  };
   React.useEffect(() => {
     _loadFirebase();
+    _loadFirestore();
   }, []);
 
   const renderVideo = () => {

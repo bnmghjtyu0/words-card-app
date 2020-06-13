@@ -1,4 +1,5 @@
-import firebase from 'firebase';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 // firebase
 var superiorConfig = {
   apiKey: 'AIzaSyDalwvzU96EDOUC5eBC91rNEVw_BuooGsg',
@@ -14,7 +15,8 @@ var app1 = firebase.initializeApp(superiorConfig);
 // var app2 = firebase.initializeApp(configTvbox, 'app2');
 
 var firebaseSuperior = firebase.database();
+var firebaseDB = firebase.firestore();
 // Get a database instance for app2
 // var firebaseTvbox = firebase.database(app2);
 
-export {firebaseSuperior};
+export {firebaseSuperior, firebaseDB};
