@@ -18,6 +18,8 @@ const CategoryScreen = ({navigation}) => {
     headerTitle: 'Other',
     headerTitleAlign: 'center',
   });
+
+  const [firestoreCategory, setFirestoreCategory] = React.useState([]);
   const [swipeablePanelActive, setSwipeablePanelActive] = React.useState(false);
   const [firebaseDatas, setFirebaseDatas] = React.useState([]);
   const [word, setWord] = React.useState('');
@@ -56,6 +58,10 @@ const CategoryScreen = ({navigation}) => {
 
   const setUnsplashAPI = async (word) => {
     const res = await getUnsplashImage(word);
+    addDocClothesItem({
+      entryId: decodeURIComponent(word),
+      image: res.results[0].urls.small,
+    });
     CategoryClothesRef.push({
       entryId: decodeURIComponent(word),
       image: res.results[0].urls.small,
@@ -93,51 +99,53 @@ const CategoryScreen = ({navigation}) => {
       setFirebaseDatas(deepCopyFirebase);
     });
   };
-
-  const _loadFirestore = () => {
+  const addDocClothesItem = (obj = {entryId: '', image: ''}) => {
+    const docClothes = firebaseDB.collection('cagegory').doc('clothes');
+    docClothes.get().then(async (doc) => {
+      if (doc.exists) {
+        const res = await doc.data();
+        if (Object.keys(res).length === 0) {
+          docClothes.set({items: [obj]}, {merge: true});
+        } else {
+          const wordExists = res.items.filter(
+            (data) => data.word === obj.entryId,
+          );
+          if (wordExists.length !== 0) {
+          } else {
+            docClothes.set({items: [...res.items, obj]}, {merge: true});
+          }
+        }
+      } else {
+        console.log('No such document!');
+      }
+    });
+  };
+  const getDocumentItems = (document) => {
+    const docUserRegular = firebaseDB.collection('cagegory').doc(document);
+    return docUserRegular.get().then((doc) => doc.data());
+    // const dara = await getDocumentItems('clothes');
+  };
+  const _loadFirestore = async () => {
     // var firebaseDB = firebase.firestore();
     // set firebaseDB.collection('').doc('').set({})
     // add collection('').doc('').add({})
     // get collection('').get().then((querySnapshot)=>{querySnapshot.forEach((doc)=>console.log(doc))})
     // del collection('').doc('').delete().then(function(){console.log('success')})
 
-    // add('apple')
-    const add = (word) => {
-      const docUserRegular = firebaseDB.collection('cagegory').doc('clothes');
-      docUserRegular.get().then(async (doc) => {
-        if (doc.exists) {
-          const res = await doc.data();
-          if (Object.keys(res).length === 0) {
-            const datas = {
-              word: word,
-            };
-            docUserRegular.set({items: [datas]}, {merge: true});
-          } else {
-            const wordExists = res.items.filter((data) => data.word === word);
-            if (wordExists.length !== 0) {
-            } else {
-              const datas = {
-                word: word,
-              };
-              docUserRegular.set({items: [...res.items, datas]}, {merge: true});
-            }
-          }
-        } else {
-          console.log('No such document!');
-        }
-      });
+    const category = () => {
+      firebaseDB
+        .collection('cagegory')
+        .get()
+        .then((querySnapshot) => {
+          const arr = [];
+          querySnapshot.forEach((doc) => {
+            arr.push(doc.id);
+            console.log(`${doc.id} => ${doc.data()}`);
+          });
+          setFirestoreCategory(arr);
+        });
     };
-    add('banafna');
-    // const query = firebaseDB
-    //   .collection('cagegory')
-    //   .where('clothes', 'array-contains', 'sharedWith');
-    // console.log('query', query);
-    const get = () => {
-      const docUserRegular = firebaseDB.collection('cagegory').doc('clothes');
-      docUserRegular.get().then(function (doc) {
-        console.log(doc.data());
-      });
-    };
+    category();
   };
   React.useEffect(() => {
     _loadFirebase();
@@ -241,6 +249,29 @@ const CategoryScreen = ({navigation}) => {
             <Text>更新圖片</Text>
           </TouchableOpacity>
           <RSrow>
+            {firestoreCategory &&
+              firestoreCategory.map((data) => {
+                return (
+                  <RSBlock col={6} mb={30}>
+                    <Card>
+                      {/* <Image
+                        source={{uri: data.image}}
+                        style={{width: '100%', height: 200}}
+                      /> */}
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          flexDirection: 'row',
+                          paddingVertical: 20,
+                        }}>
+                        <Text style={{fontSize: 22, marginRight: 10}}>
+                          {data}
+                        </Text>
+                      </View>
+                    </Card>
+                  </RSBlock>
+                );
+              })}
             {firebaseDatas.map((data, dataIdx) => {
               return (
                 <RSBlock key={data.id} col={6} mb={30}>
