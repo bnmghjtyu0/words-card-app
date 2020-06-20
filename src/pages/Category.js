@@ -4,7 +4,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Card, Button, TextInput} from 'react-native-paper';
 import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {client} from '../api/index';
+import {clientDictionary} from '../api/index';
 import {RScontainer, RSrow, RSBlock} from '../styled/main';
 import {firebaseSuperior} from '../config/firebaseConfig';
 import Toast from '../wrap/Toast';
@@ -30,7 +30,7 @@ const CategoryScreen = ({navigation}) => {
     if (wordLower !== '') {
       const entryId = wordLower; //grooming
       const dictCode = 'british';
-      const res = await client(
+      const res = await clientDictionary(
         `https://dictionary.cambridge.org/api/v1/dictionaries/${dictCode}/entries/${entryId}/pronunciations`,
         {
           body: {},

@@ -1484,6 +1484,13 @@
     react-is "^16.13.0"
     use-subscription "^1.4.0"
 
+"@react-navigation/material-top-tabs@^5.2.10":
+  version "5.2.10"
+  resolved "https://registry.npm.taobao.org/@react-navigation/material-top-tabs/download/@react-navigation/material-top-tabs-5.2.10.tgz#6144217267253fb889d55ba91344832223322e63"
+  integrity sha1-YUQhcmclP7iJ1VupE0SDIiMyLmM=
+  dependencies:
+    color "^3.1.2"
+
 "@react-navigation/native@^3.7.13":
   version "3.7.13"
   resolved "https://registry.npm.taobao.org/@react-navigation/native/download/@react-navigation/native-3.7.13.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40react-navigation%2Fnative%2Fdownload%2F%40react-navigation%2Fnative-3.7.13.tgz#5fdf879d5af40fb5bf751b6d932dd30656c9991e"
@@ -6297,6 +6304,13 @@ react-native-ratings@^7.2.0:
     lodash "^4.17.4"
     prop-types "^15.5.10"
 
+react-native-reanimated@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.npm.taobao.org/react-native-reanimated/download/react-native-reanimated-1.9.0.tgz#38676c99dd585504fdc7331efb45e5f48ec7339a"
+  integrity sha1-OGdsmd1YVQT9xzMe+0Xl9I7HM5o=
+  dependencies:
+    fbjs "^1.0.0"
+
 react-native-safe-area-context@^3.0.2:
   version "3.0.2"
   resolved "https://registry.npm.taobao.org/react-native-safe-area-context/download/react-native-safe-area-context-3.0.2.tgz#95dd7e56bc89bcc4f3f7bb5fada30c98420328b2"
@@ -6318,6 +6332,11 @@ react-native-status-bar-height@^2.2.0:
   version "2.5.0"
   resolved "https://registry.npm.taobao.org/react-native-status-bar-height/download/react-native-status-bar-height-2.5.0.tgz#bc0fb85230603850aab9667ee8111a62954de90c"
   integrity sha1-vA+4UjBgOFCquWZ+6BEaYpVN6Qw=
+
+react-native-tab-view@^2.14.4:
+  version "2.14.4"
+  resolved "https://registry.npm.taobao.org/react-native-tab-view/download/react-native-tab-view-2.14.4.tgz#740007e62c8723c6813b8c8a05caaaf82c816620"
+  integrity sha1-dAAH5iyHI8aBO4yKBcqq+CyBZiA=
 
 react-native-vector-icons@^6.6.0:
   version "6.6.0"

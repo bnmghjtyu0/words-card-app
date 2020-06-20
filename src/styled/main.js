@@ -1,6 +1,6 @@
-import {View} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import styled from 'styled-components';
-import {flexbox,space} from 'styled-system';
+import {flexbox, space, border, color, typography} from 'styled-system';
 export const RScontainer = styled.View`
   ${flexbox}
   width:100%;
@@ -14,7 +14,20 @@ export const RSrow = styled.View`
   margin-left: -15px;
   margin-right: -15px;
 `;
-
+export const RsView = styled.View`
+  ${flexbox}
+  ${border}
+  ${space}
+`;
+export const RsTouchableOpacity = styled.TouchableOpacity`
+  ${flexbox}
+  ${border}
+`;
+export const RsText = styled.Text`
+  ${typography}
+  ${color}
+  ${space}
+`;
 export const RSBlock = styled(View)`
   ${flexbox}
   ${space}

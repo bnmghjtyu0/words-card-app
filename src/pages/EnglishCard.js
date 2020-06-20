@@ -17,7 +17,7 @@ import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // import VideoPlayer from 'react-native-video-controls';
 import {firebaseSuperior} from '../config/firebaseConfig';
-import {client} from '../api/index';
+import {clientDictionary} from '../api/index';
 import Toast from '../wrap/Toast';
 const CoolRef = firebaseSuperior.ref('cool');
 // CoolRef.remove();
@@ -39,7 +39,7 @@ const InputSearch = () => {
     if (wordLower !== '') {
       const entryId = wordLower; //grooming
       const dictCode = 'british';
-      const res = await client(
+      const res = await clientDictionary(
         `https://dictionary.cambridge.org/api/v1/dictionaries/${dictCode}/entries/${entryId}/pronunciations`,
         {
           body: {},

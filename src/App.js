@@ -5,31 +5,18 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createStackNavigator} from '@react-navigation/stack';
-import EnglishCard from './src/pages/EnglishCard';
-import CategoryScreen from './src/pages/Category';
-function HomeScreen({navigation}) {
-  navigation.setOptions({
-    headerTitle: 'Other',
-    headerTitleAlign: 'center',
-  });
-  return (
-    <SafeAreaView
-      style={{flex: 1, justifyContent: 'space-between', alignItems: 'center'}}>
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Home</Text>
-      </View>
-    </SafeAreaView>
-  );
-}
+import CategoryScreen from './pages/Category';
+import MovieScreen from './pages/MovieScreen';
+import EnglishCard from './pages/EnglishCard';
 
-const HomeStack = createStackNavigator();
+const AppStack = createStackNavigator();
 
-function HomeStackScreen() {
+function MovieStackScreen() {
   return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen
-        name="Home"
-        component={HomeScreen}
+    <AppStack.Navigator>
+      <AppStack.Screen
+        name="Other"
+        component={MovieScreen}
         options={({route}) => ({
           headerStyle: {
             backgroundColor: 'tomato',
@@ -40,22 +27,22 @@ function HomeStackScreen() {
           },
         })}
       />
-    </HomeStack.Navigator>
+    </AppStack.Navigator>
   );
 }
 
 function EnglishCardStackScreen() {
   return (
-    <HomeStack.Navigator headerMode="none">
-      <HomeStack.Screen name="EnglishCard" component={EnglishCard} />
-    </HomeStack.Navigator>
+    <AppStack.Navigator headerMode="none">
+      <AppStack.Screen name="EnglishCard" component={EnglishCard} />
+    </AppStack.Navigator>
   );
 }
 function CategoryStackScreen() {
   return (
-    <HomeStack.Navigator headerMode="none">
-      <HomeStack.Screen name="CategoryScreen" component={CategoryScreen} />
-    </HomeStack.Navigator>
+    <AppStack.Navigator headerMode="none">
+      <AppStack.Screen name="Category" component={CategoryScreen} />
+    </AppStack.Navigator>
   );
 }
 
@@ -71,7 +58,7 @@ const App = () => {
 
               if (route.name === 'Search') {
                 iconName = focused ? 'ios-search' : 'ios-search';
-              } else if (route.name === 'Other') {
+              } else if (route.name === 'Movie') {
                 iconName = focused ? 'ios-list-box' : 'ios-list';
               } else if (route.name === 'Category') {
                 iconName = focused ? 'ios-albums' : 'ios-albums';
@@ -87,7 +74,7 @@ const App = () => {
           }}>
           <Tab.Screen name="Category" component={CategoryStackScreen} />
           <Tab.Screen name="Search" component={EnglishCardStackScreen} />
-          <Tab.Screen name="Other" component={HomeStackScreen} />
+          <Tab.Screen name="Movie" component={MovieStackScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
