@@ -65,35 +65,58 @@ const HomeScreen = () => {
   return (
     <ScrollView
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          style={{flex: 1, backgroundColor: 'rgba(60,97,249,1)'}}
+        />
       }>
-      <RsView p={[20, 0]} flexDirection="row" justifyContent="center">
+      {/* <RsView p={[20, 0]} flexDirection="row" justifyContent="center">
         <RsText>{moviesDatas.dates.minimum}</RsText>
         <RsText mx={10}>~</RsText>
         <RsText>{moviesDatas.dates.maximum}</RsText>
-      </RsView>
+      </RsView> */}
       <FlatList
+        style={{backgroundColor: 'rgba(60,97,249,1)'}}
         data={moviesDatas.results}
         renderItem={({item}) => (
           <RsTouchableOpacity
             activeOpacity={0.75}
             flexDirection="row"
-            border="0.5px solid"
             borderColor="black"
+            style={{marginBottom: 20, backgroundColor: '#fff', borderRadius: 6}}
             onPress={() => onSelect(item.id)}>
             <Image
-              style={{width: 120, height: 200}}
+              style={{
+                width: 80,
+                height: 120,
+                borderTopLeftRadius: 6,
+                borderBottomLeftRadius: 6,
+              }}
               source={{
                 uri: `https://image.tmdb.org/t/p/w500/${item.poster_path}`,
               }}
             />
-            <RsView padding={20}>
-              <RsText fontSize={24} color="black">
+            <RsView padding={20} style={{position: 'relative', width: '100%'}}>
+              <RsText fontSize={18} color="black">
                 {item.title}
               </RsText>
-              <RsText fontSize={14} color="black">
-                {item.vote_average}
-              </RsText>
+              <RsView
+                style={{
+                  position: 'absolute',
+                  right: 90,
+                  top: 10,
+                  backgroundColor: 'rgba(60,97,249,1)',
+                  width: 42,
+                  height: 42,
+                  borderRadius: 99,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <RsText fontSize={14} color="#fff">
+                  {`${item.vote_average * 10}%`}
+                </RsText>
+              </RsView>
             </RsView>
           </RsTouchableOpacity>
         )}
@@ -150,38 +173,53 @@ const SettingsScreen = () => {
   return (
     <ScrollView
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          style={{flex: 1, backgroundColor: 'rgba(60,97,249,1)'}}
+        />
       }>
-      <RsView p={[20, 0]} flexDirection="row" justifyContent="center">
-        {/* <RsText>{moviesDatas.dates.minimum}</RsText>
-        <RsText mx={10}>~</RsText>
-        <RsText>{moviesDatas.dates.maximum}</RsText> */}
-      </RsView>
       <FlatList
+        style={{backgroundColor: 'rgba(60,97,249,1)'}}
         data={moviesDatas.results}
         renderItem={({item}) => (
           <RsTouchableOpacity
             activeOpacity={0.75}
             flexDirection="row"
-            border="0.5px solid"
             borderColor="black"
+            style={{marginBottom: 20, backgroundColor: '#fff', borderRadius: 6}}
             onPress={() => onSelect(item.id)}>
             <Image
-              style={{width: 120, height: 200}}
+              style={{
+                width: 80,
+                height: 120,
+                borderTopLeftRadius: 6,
+                borderBottomLeftRadius: 6,
+              }}
               source={{
                 uri: `https://image.tmdb.org/t/p/w500/${item.poster_path}`,
               }}
             />
-            <RsView padding={20}>
-              <RsText fontSize={24} color="black">
+            <RsView padding={20} style={{position: 'relative', width: '100%'}}>
+              <RsText fontSize={18} color="black">
                 {item.title}
               </RsText>
-              <RsText fontSize={14} color="black">
-                {item.vote_average}
-              </RsText>
-              <RsText fontSize={14} color="black">
-                {item.release_date}
-              </RsText>
+              <RsView
+                style={{
+                  position: 'absolute',
+                  right: 90,
+                  top: 10,
+                  backgroundColor: 'rgba(60,97,249,1)',
+                  width: 42,
+                  height: 42,
+                  borderRadius: 99,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <RsText fontSize={14} color="#fff">
+                  {`${item.vote_average * 10}%`}
+                </RsText>
+              </RsView>
             </RsView>
           </RsTouchableOpacity>
         )}
@@ -197,20 +235,28 @@ function MyTabBar({state, descriptors, navigation, position}) {
   const tabWidth = totalWidth / state.routes.length;
   const [translateValue] = React.useState(new Animated.Value(0));
   return (
-    <View style={{flexDirection: 'row'}}>
+    <View
+      style={{
+        flexDirection: 'row',
+        padding: 0,
+        backgroundColor: 'rgba(255,255,255,.4)',
+        borderRadius: 25,
+        marginTop: 30,
+        marginBottom: 50,
+      }}>
       <Animated.View
         style={[
           {
-            height: 3,
+            width:'100%',
+            height: 50,
             position: 'absolute',
-            bottom: 0,
             left: 0,
-            backgroundColor: '#E94F11',
-            borderRadius: 0,
+            backgroundColor: '#fff',
+            borderRadius: 25,
           },
           {
             transform: [{translateX: translateValue}],
-            width: tabWidth - 60,
+            width: tabWidth,
           },
         ]}
       />
@@ -262,8 +308,16 @@ function MyTabBar({state, descriptors, navigation, position}) {
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={{flex: 1, padding: 20}}>
-              <Text>{label}</Text>
+              style={{
+                flex: 1,
+                height: 50,
+                alignItems: 'center',
+                backgroundColor: 'transparent',
+                borderRadius: 25,
+                justifyContent: 'center',
+                flexDirection: 'row',
+              }}>
+              <Text style={{fontSize: 15}}>{label}</Text>
             </TouchableOpacity>
           );
         } else {
@@ -275,8 +329,16 @@ function MyTabBar({state, descriptors, navigation, position}) {
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={{flex: 1, padding: 20}}>
-              <Text>{label}</Text>
+              style={{
+                flex: 1,
+                height: 50,
+                alignItems: 'center',
+                backgroundColor: 'transparent',
+                borderRadius: 25,
+                justifyContent: 'center',
+                flexDirection: 'row',
+              }}>
+              <Text style={{color: '#fff', fontSize: 15}}>{label}</Text>
             </TouchableOpacity>
           );
         }
@@ -288,12 +350,17 @@ function MyTabBar({state, descriptors, navigation, position}) {
 const Other = ({navigation}) => {
   const [lang, setLang] = React.useContext(TabsContext);
   navigation.setOptions({
+    headerStyle: {
+      backgroundColor: 'rgba(60,97,249,1)',
+      border: 'none',
+    },
     headerTitle: lang === 'tw' ? '電影看板' : 'Movie Board',
     headerTitleAlign: 'center',
     headerRight: ({tintColor}) => (
       <View style={{paddingRight: 20, flexDirection: 'row'}}>
         <Button
           title="tw"
+          color="#fff"
           onPress={() => {
             setLang('tw');
           }}>
@@ -301,6 +368,7 @@ const Other = ({navigation}) => {
         </Button>
         <Button
           title="en"
+          color="#fff"
           onPress={() => {
             setLang('en');
           }}>
@@ -310,16 +378,23 @@ const Other = ({navigation}) => {
     ),
   });
   return (
-    <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
-      <Tab.Screen
-        name={lang === 'tw' ? '本週新片' : 'New'}
-        component={HomeScreen}
-      />
-      <Tab.Screen
-        name={lang === 'tw' ? '排行榜' : 'Setting'}
-        component={SettingsScreen}
-      />
-    </Tab.Navigator>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: 'rgba(60,97,249,1)',
+        paddingHorizontal: 20,
+      }}>
+      <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
+        <Tab.Screen
+          name={lang === 'tw' ? '本週新片' : 'New'}
+          component={HomeScreen}
+        />
+        <Tab.Screen
+          name={lang === 'tw' ? '排行榜' : 'Setting'}
+          component={SettingsScreen}
+        />
+      </Tab.Navigator>
+    </View>
   );
 };
 
