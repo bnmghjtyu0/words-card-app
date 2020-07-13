@@ -247,7 +247,7 @@ function MyTabBar({state, descriptors, navigation, position}) {
       <Animated.View
         style={[
           {
-            width:'100%',
+            width: '100%',
             height: 50,
             position: 'absolute',
             left: 0,
@@ -347,8 +347,9 @@ function MyTabBar({state, descriptors, navigation, position}) {
   );
 }
 
-const Other = ({navigation}) => {
+const MovieScreen = ({navigation}) => {
   const [lang, setLang] = React.useContext(TabsContext);
+  
   navigation.setOptions({
     headerStyle: {
       backgroundColor: 'rgba(60,97,249,1)',
@@ -358,22 +359,28 @@ const Other = ({navigation}) => {
     headerTitleAlign: 'center',
     headerRight: ({tintColor}) => (
       <View style={{paddingRight: 20, flexDirection: 'row'}}>
-        <Button
-          title="tw"
-          color="#fff"
+        <TouchableOpacity
+          style={{
+            backgroundColor: `${lang === 'tw' ? 'blue' : 'rgba(0,0,0,0)'}`,
+            padding: 6,
+            marginRight: 12,
+          }}
           onPress={() => {
+            console.log(lang)
             setLang('tw');
           }}>
-          {lang}
-        </Button>
-        <Button
-          title="en"
-          color="#fff"
+          <Text style={{color: '#fff'}}>tw</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgrondColor: `${lang === 'en' ? 'blue' : 'green'}`,
+            padding: 6,
+          }}
           onPress={() => {
             setLang('en');
           }}>
-          {lang}
-        </Button>
+          <Text style={{color: '#fff'}}>en</Text>
+        </TouchableOpacity>
       </View>
     ),
   });
@@ -398,4 +405,4 @@ const Other = ({navigation}) => {
   );
 };
 
-export default withContext(Other);
+export default withContext(MovieScreen);
